@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星蕊教育 | XingRui Blog</title>
+  <meta name="description" content="星蕊教育个人博客 - 记录科技、教育与创意。">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">星蕊教育</a>
+      <nav class="nav">
+        <a href="/">首页</a>
+        <a href="/about.html">关于</a>
+        <a href="/archive.html">归档</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>你好，我是书鑫</h1>
+      <p>欢迎来到星蕊教育的个人博客，这里记录编程、教育与创意灵感。</p>
+    </section>
+
+    <section>
+      <h2 class="section-title">最新文章</h2>
+      <div id="post-list" class="post-list"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> 星蕊教育 · XingRui.cc</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    fetch('/posts/posts.json?_=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        const list = document.getElementById('post-list');
+        if (!Array.isArray(data) || data.length === 0) {
+          list.innerHTML = '<p>还没有文章，去 posts 目录创建一篇试试～</p>';
+          return;
+        }
+        list.innerHTML = data.map(post => `
+          <article class="post-card">
+            <a class="post-link" href="${post.url}">
+              <h3 class="post-title">${post.title}</h3>
+              <p class="post-meta">${post.date} · ${post.tags?.join('、') || '未分类'}</p>
+              <p class="post-excerpt">${post.excerpt || ''}</p>
+            </a>
+          </article>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('post-list').innerHTML = '<p>加载文章列表失败，请稍后再试。</p>';
+      });
+  </script>
+</body>
+</html>
